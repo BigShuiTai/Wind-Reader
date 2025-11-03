@@ -1,0 +1,12 @@
+{
+    "reader": "oscat_nc",
+    "source": "./example_data",
+    "filename": "oscat_20251101_084820_ocsat3_15491_o_250_4007_ovw_l2.nc",
+    "wind_band": null,
+    "crop_area": true,
+    "georange": [-35, -25, 225, 235],
+    "projection": "Mercator",
+    "projection_parameters": {"central_longitude": 180},
+    "lon_lat_step": 2,
+    "save_file": "oceansat3_oscat_example.png"
+}

@@ -1,0 +1,12 @@
+{
+    "reader": "hscat_hdf",
+    "source": "./example_data",
+    "filename": "H2B_OPER_SCA_L2B_OR_20210819T225905_20210820T004328_14133_pwp_250_07_owv.h5",
+    "wind_band": null,
+    "crop_area": true,
+    "georange": [17, 27, 265, 275],
+    "projection": "Miller",
+    "projection_parameters": {"central_longitude": 180},
+    "lon_lat_step": 2,
+    "save_file": "hy2b_hscat_example.png"
+}

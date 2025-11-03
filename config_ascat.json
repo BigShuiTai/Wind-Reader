@@ -1,0 +1,12 @@
+{
+    "reader": "ascat_nc",
+    "source": "./example_data",
+    "filename": "ascat_20210822_001500_metopc_14477_eps_o_250_3203_ovw.l2.nc",
+    "wind_band": null,
+    "crop_area": true,
+    "georange": [20.3, 28.3, 121.9, 129.9],
+    "projection": "Mercator",
+    "projection_parameters": {"central_longitude": 180},
+    "lon_lat_step": 2,
+    "save_file": "metopc_ascat_250_example.png"
+}

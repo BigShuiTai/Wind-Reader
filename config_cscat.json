@@ -1,0 +1,12 @@
+{
+    "reader": "cscat_nc",
+    "source": "./example_data",
+    "filename": "CFO_EXPR_SCA_C_L2B_OR_20210801T030812_15259_250_33_owv.nc",
+    "wind_band": null,
+    "crop_area": true,
+    "georange": [-50, -40, 28, 38],
+    "projection": "Miller",
+    "projection_parameters": {"central_longitude": 180},
+    "lon_lat_step": 2,
+    "save_file": "cfosat_cscat_example.png"
+}
