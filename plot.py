@@ -107,6 +107,7 @@ def main(config):
     # normal style
     plot_style = {
         'axes_facecolor': '#FFFFFF',
+        'colormap': 'wind',
         'barbs_alpha': 1.,
         'coastline_color': 'k',
         'gridlines_color': 'k'
@@ -115,6 +116,7 @@ def main(config):
     # for overlaying infrared imagery
     # plot_style = {
     #     'axes_facecolor': '#333333',
+    #     'colormap': 'wind_fnmoc',
     #     'barbs_alpha': 0.7,
     #     'coastline_color': 'k',
     #     'gridlines_color': 'w'
@@ -133,7 +135,7 @@ def main(config):
     ax.set_extent([lonmin, lonmax, latmin, latmax], crs=ccrs.PlateCarree())
 
     # plot brabs
-    cmap, vmin, vmax = cm.get_colormap("wind_fnmoc")
+    cmap, vmin, vmax = cm.get_colormap(plot_style["colormap"])
     nh = lats > 0
     bb = ax.barbs(
         lons,
