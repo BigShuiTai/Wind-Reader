@@ -71,7 +71,7 @@ class WIND_BASE(object):
     def crop(self, ll_box):
         if self.longitude is None or self.latitude is None or self.wind_spd is None:
             raise ValueError(
-                "Longitude or Latitude or data is not empty. "
+                "Longitude or Latitude or data is empty. "
                 "You should run `load` first."
             )
         if not ll_box:
@@ -88,6 +88,11 @@ class WIND_BASE(object):
             self.wvc_time = self.wvc_time[yi:yj]
 
     def nearest_time(self, ll_box):
+        if self.longitude is None or self.latitude is None or self.wvc_time is None:
+            raise ValueError(
+                "Longitude or Latitude or time is empty. "
+                "You should run `load` first."
+            )
         if not ll_box:
             raise ValueError("nearest_time must be given ll_box value.")
         latmin, latmax, lonmin, lonmax = ll_box
@@ -126,3 +131,4 @@ class WIND_BASE(object):
     
     def get_values(self):
         return self.wind_spd, self.wind_dir
+
