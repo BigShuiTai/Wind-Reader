@@ -8,5 +8,6 @@
     "projection": "Mercator",
     "projection_parameters": {"central_longitude": 180},
     "lon_lat_step": 2,
-    "save_file": "metopc_ascat_250_example.png"
+    "save_path": "./",
+    "save_filename": "metopc_ascat_250_example.png"
 }

@@ -8,5 +8,6 @@
     "projection": "Miller",
     "projection_parameters": {"central_longitude": 180},
     "lon_lat_step": 2,
-    "save_file": "hy2b_hscat_example.png"
+    "save_path": "./",
+    "save_filename": "hy2b_hscat_example.png"
 }

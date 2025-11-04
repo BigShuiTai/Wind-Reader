@@ -8,5 +8,6 @@
     "projection": "Mercator",
     "projection_parameters": {"central_longitude": 180},
     "lon_lat_step": 2,
-    "save_file": "oceansat3_oscat_example.png"
+    "save_path": "./",
+    "save_filename": "oceansat3_oscat_example.png"
 }

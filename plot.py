@@ -39,7 +39,9 @@ def main(config):
     proj_name = config.get("projection", "PlateCarree")
     proj_para = config.get("projection_parameters", {"central_longitude": 0})
     lonlat_step = config.get("lon_lat_step", 2)
-    sfname = config.get("save_file", None)
+    # save parameters
+    spath = config.get("save_path", None)
+    sfname = config.get("save_filename", None)
 
     """search reader"""
     reader = "auto" if not reader else reader
@@ -220,7 +222,7 @@ def main(config):
 
     # save figure
     fig.savefig(
-        sfname,
+        f"{spath}/{sfname}",
         dpi=dpi,
         bbox_inches="tight",
         pad_inches=0.03,
