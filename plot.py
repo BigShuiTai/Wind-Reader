@@ -17,7 +17,6 @@ from cartopy.mpl.ticker import LongitudeFormatter, LatitudeFormatter
 from windReader.reader import find_reader
 from windReader.colormap import colormap as cm
 
-
 DEFAULT_WIDTH = 5
 
 def calc_figsize(georange):
@@ -30,17 +29,17 @@ def calc_figsize(georange):
 def main(config):
     """read configs"""
     # reader parameters
-    reader = config["reader"]
-    route = config["source"]
-    fname = config["filename"]
-    band = config["wind_band"]
-    crop_area = config["crop_area"]
-    georange = tuple(config["georange"])
+    reader = config.get("reader", None)
+    route = config.get("source", None)
+    fname = config.get("filename", None)
+    band = config.get("wind_band", None)
+    crop_area = config.get("crop_area", False)
+    georange = tuple(config.get("georange", (-90, 90, 0, 360)))
     # plot parameters
-    proj_name = config["projection"]
-    proj_para = config["projection_parameters"]
-    lonlat_step = config["lon_lat_step"]
-    sfname = config["save_file"]
+    proj_name = config.get("projection", "PlateCarree")
+    proj_para = config.get("projection_parameters", {"central_longitude": 0})
+    lonlat_step = config.get("lon_lat_step", 2)
+    sfname = config.get("save_file", None)
 
     """search reader"""
     reader = "auto" if not reader else reader
@@ -97,7 +96,7 @@ def main(config):
     print("...PLOTING...")
 
     # set figure-dpi
-    dpi = 1500 / DEFAULT_WIDTH
+    dpi = 1200 / DEFAULT_WIDTH
     
     # set figsize
     figsize = calc_figsize(georange)
@@ -105,18 +104,37 @@ def main(config):
     # set projection
     proj = getattr(ccrs, proj_name)
 
+    # normal style
+    plot_style = {
+        'axes_facecolor': '#FFFFFF',
+        'barbs_alpha': 1.,
+        'coastline_color': 'k',
+        'gridlines_color': 'k'
+    }
+
+    # for overlaying infrared imagery
+    # plot_style = {
+    #     'axes_facecolor': '#333333',
+    #     'barbs_alpha': 0.7,
+    #     'coastline_color': 'k',
+    #     'gridlines_color': 'w'
+    # }
+
     # set figure and axis
     fig, ax = plt.subplots(figsize=figsize, subplot_kw=dict(projection=proj(**proj_para)))
-    ax.patch.set_facecolor("#000000")
+    ax.patch.set_facecolor(plot_style["axes_facecolor"])
+
+    # let spines invisible
+    for spine in ax.spines.values():
+        spine.set_visible(False)
 
     # set extent
     latmin, latmax, lonmin, lonmax = georange
     ax.set_extent([lonmin, lonmax, latmin, latmax], crs=ccrs.PlateCarree())
 
     # plot brabs
-    cmap, vmin, vmax = cm.get_colormap("wind")
+    cmap, vmin, vmax = cm.get_colormap("wind_fnmoc")
     nh = lats > 0
-
     bb = ax.barbs(
         lons,
         lats,
@@ -129,15 +147,16 @@ def main(config):
         pivot='middle',
         length=3.5,
         linewidth=0.25,
-        alpha=0.7,
+        alpha=plot_style["barbs_alpha"],
         transform=ccrs.PlateCarree(),
     )
 
+    # plot colorbar
     cb = plt.colorbar(
         bb,
         ax=ax,
         orientation='vertical',
-        pad=0,
+        pad=0.01,
         aspect=35,
         fraction=0.03,
         extend='both',
@@ -153,7 +172,7 @@ def main(config):
     ax.add_feature(
         cfeature.COASTLINE.with_scale("10m"),
         facecolor="None",
-        edgecolor="k",
+        edgecolor=plot_style["coastline_color"],
         lw=0.5,
     )
 
@@ -169,7 +188,7 @@ def main(config):
         draw_labels=True,
         linewidth=0.6,
         linestyle=':',
-        color='k',
+        color=plot_style["gridlines_color"],
         xlocs=xticks,
         ylocs=yticks,
     )
@@ -179,10 +198,10 @@ def main(config):
     gl.right_labels = False
     gl.left_labels = True
     gl.geo_labels = False
-    gl.xpadding = 3
-    gl.ypadding = 3
-    gl.xlabel_style = {'size': 4, 'color': 'k', 'ha': 'center'}
-    gl.ylabel_style = {'size': 4, 'color': 'k', 'va': 'center'}
+    gl.xpadding = 2.5
+    gl.ypadding = 2.5
+    gl.xlabel_style = {'size': 3.5, 'color': 'k', 'ha': 'center'}
+    gl.ylabel_style = {'size': 3.5, 'color': 'k', 'va': 'center'}
 
     # add title at the left top of figure
     text = f'{sat_title} Wind (barbs) [kt]'
@@ -197,14 +216,12 @@ def main(config):
     except NameError:
         pass
 
-    ax.axis("off")
-
     # save figure
     fig.savefig(
         sfname,
         dpi=dpi,
         bbox_inches="tight",
-        pad_inches=0.02,
+        pad_inches=0.03,
     )
 
     plt.close("all")
