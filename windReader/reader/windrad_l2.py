@@ -20,9 +20,21 @@ class WindRAD(WIND_BASE):
     def _quality_control(self, data, qc_flag):
         bitmask = (1 << 17) - 1
         truncated = qc_flag & bitmask
+        # Use the full QC flags
+        # return np.ma.array(
+        #     data,
+        #     mask=truncated,
+        #     dtype=data.dtype,
+        #     fill_value=data.fill_value
+        # )
+        # Bit 2 and Bit 3 may be falsely reported as QC flags,
+        # so I use the code below. Use the code above if you need full QC.
+        allowed_codes = np.array([1 << 2, 1 << 3], dtype=np.int64)
+        allowed_mask = int(np.bitwise_or.reduce(allowed_codes))
+        keep = (truncated & allowed_mask) == truncated
         return np.ma.array(
             data,
-            mask=truncated,
+            mask=(~keep),
             dtype=data.dtype,
             fill_value=data.fill_value
         )
@@ -45,7 +57,6 @@ class WindRAD(WIND_BASE):
             raise ValueError(f"Shape mismatch: {dc.shape=} vs {ms.shape=}")
         d = dc * day_slope + day_intercept
         s = (ms * ms_slope + ms_intercept) * 1e-3
-        # out = np.asarray([t0 + timedelta(days=float(d_), seconds=float(s_)) for d_, s_ in zip(d, s)], dtype=object)
         out = np.empty(day_count.shape, dtype=object)
         for (idx, d_), (_, s_) in zip(np.ndenumerate(d), np.ndenumerate(s)):
             out[*idx] = t0 + timedelta(days=float(d_), seconds=float(s_))
