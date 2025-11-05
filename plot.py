@@ -34,6 +34,7 @@ def main(config):
     fname = config.get("filename", None)
     band = config.get("wind_band", None)
     crop_area = config.get("crop_area", False)
+    quality_control = config.get("use_quality_control", True)
     georange = tuple(config.get("georange", (-90, 90, 0, 360)))
     # plot parameters
     proj_name = config.get("projection", "PlateCarree")
@@ -59,9 +60,9 @@ def main(config):
     reader = reader_class(load_file)
 
     if reader.WIND_DATASETS_ID:
-        reader.load(band)
+        reader.load(band, qc=quality_control)
     else:
-        reader.load()
+        reader.load(qc=quality_control)
 
     # add 360 deg for longitude that lower than 0
     reader.longitude[reader.longitude < 0] += 360

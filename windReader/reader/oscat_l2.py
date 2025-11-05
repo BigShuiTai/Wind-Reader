@@ -13,6 +13,19 @@ class OSCAT(WIND_BASE):
     def _autodecode(string, encoding="utf-8"):
         return string.decode(encoding) if isinstance(string, bytes) else string
 
+    def _quality_control(self, data, qc_flag):
+        bitmask = (1 << 22) - 1
+        truncated = qc_flag & bitmask
+        allowed_codes = np.array([1 << 14, 1 << 15], dtype=np.int64)
+        allowed_mask = int(np.bitwise_or.reduce(allowed_codes))
+        keep = (truncated & allowed_mask) == truncated
+        return np.ma.array(
+            data,
+            mask=(~keep),
+            dtype=data.dtype,
+            fill_value=data.fill_value
+        )
+
     def _calc_wvc_time(self, seconds):
         # calculate wvc time from 1990-01-01 00:00 UTC
         t0 = datetime(1990, 1, 1, 0, 0, 0)
@@ -30,7 +43,7 @@ class OSCAT(WIND_BASE):
         h = spd * np.cos(np.deg2rad(dir))
         return {'v': v, 'h': h}
 
-    def load(self):
+    def load(self, qc=True):
         self.wvc_time = self._calc_wvc_time(
             self._datasets.variables["time"][:]
         )
@@ -43,6 +56,12 @@ class OSCAT(WIND_BASE):
         )
         self.latitude = self._datasets.variables["lat"][:]
         self.longitude = self._datasets.variables["lon"][:]
+        if qc:
+            # quality control by qc flags
+            qc_flag = self._datasets.variables["wvc_quality_flag"][:]
+            self.wind_spd = self._quality_control(self.wind_spd, qc_flag)
+            self.wind_dir["v"] = self._quality_control(self.wind_dir["v"], qc_flag)
+            self.wind_dir["h"] = self._quality_control(self.wind_dir["h"], qc_flag)
 
     @property
     def attrs(self):

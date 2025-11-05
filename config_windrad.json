@@ -4,6 +4,7 @@
     "filename": "FY3E_WRAD-_ORBD_L2_OVW_MLT_NUL_20251101_0927_010KM_V0.HDF",
     "wind_band": "Ku_band",
     "crop_area": true,
+    "use_quality_control": true,
     "georange": [10, 20, 295, 305],
     "projection": "Mercator",
     "projection_parameters": {"central_longitude": 180},
