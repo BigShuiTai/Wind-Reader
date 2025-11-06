@@ -20,24 +20,23 @@ class WindRAD(WIND_BASE):
     def _quality_control(self, data, qc_flag):
         bitmask = (1 << 17) - 1
         truncated = qc_flag & bitmask
-        # Use the full QC flags
-        # return np.ma.array(
-        #     data,
-        #     mask=truncated,
-        #     dtype=data.dtype,
-        #     fill_value=data.fill_value
-        # )
-        # Bit 2 and Bit 3 may be falsely reported as QC flags,
-        # so I use the code below. Use the code above if you need full QC.
-        allowed_codes = np.array([1 << 2, 1 << 3], dtype=np.int64)
-        allowed_mask = int(np.bitwise_or.reduce(allowed_codes))
-        keep = (truncated & allowed_mask) == truncated
         return np.ma.array(
             data,
-            mask=(~keep),
+            mask=truncated,
             dtype=data.dtype,
             fill_value=data.fill_value
         )
+        # Bit 2 and Bit 3 may be falsely reported as QC flags,
+        # use the code below if you need.
+        # allowed_codes = np.array([1 << 2, 1 << 3], dtype=np.int64)
+        # allowed_mask = int(np.bitwise_or.reduce(allowed_codes))
+        # keep = (truncated & allowed_mask) == truncated
+        # return np.ma.array(
+        #     data,
+        #     mask=(~keep),
+        #     dtype=data.dtype,
+        #     fill_value=data.fill_value
+        # )
 
     def _calc_wvc_time(self, day_count, day_slope, day_intercept,
                              ms_count, ms_slope, ms_intercept):
